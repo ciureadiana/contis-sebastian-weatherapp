@@ -1,0 +1,49 @@
+<div class="weather-container">
+  <div class="title">Weather Dashboard</div>
+
+  <mat-form-field class="example-full-width">
+    <mat-label>Location</mat-label>
+    <input matInput type="text" (keyup)="searchValue$.next($event.target.value)" placeholder="Please type a location"
+      [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="getWeather($event.option.value)"
+      [displayWith]="displayFn">
+      @for (option of locationOptions(); track option) {
+      <mat-option [value]="option">{{option.display_name}}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  @if(selectedLocation) {
+  <div class="subtitle">Weather in: {{selectedLocation}}</div>
+  @if(weather()) {
+  <div class="weather-card">
+    <div>
+      <div>Weather condition</div>
+      <div class="material-symbols-outlined">
+        {{weather().current_weather.weathercode | weatherIcon}}
+      </div>
+      <div>
+        {{weather().current_weather.weathercode | weatherText}}
+      </div>
+    </div>
+    <div>
+      <div>Temperature</div>
+      {{weather().current_weather.temperature}} {{weather().current_weather_units.temperature}}
+    </div>
+    <div>
+      <div>Humidity</div>
+      {{weather().current_weather.humidity || '-'}}
+    </div>
+    <div>
+      <div>Wind speed</div>
+      <div>
+        {{weather().current_weather.windspeed}} {{weather().current_weather_units.windspeed}}
+      </div>
+    </div>
+  </div>
+  }
+  }
+  @if(searchValue && locationOptions()?.length === 0) {
+  <mat-error>There is no location with this name: {{searchValue}}</mat-error>
+  }
+</div>
